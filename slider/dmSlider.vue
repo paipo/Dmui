@@ -1,29 +1,36 @@
 <template>
   <div class="slider" ref="mySlider">
-    <div class="left-btn" :class="{active:myPosition.isBtn==2}"></div>
+    <div ref="sd" class="left-btn" :style="{left:valueLeft()}"></div>
     <div class="propo"></div>
     <div class="propo-bg"></div>
-    <div class="right-btn" :class="{active:myPosition.isBtn==1}"></div>
+    <!-- <div class="right-btn" :class="{active:myPosition.isBtn==1}"></div> -->
+    <label v-if="this.value >= 50" style="float:left" class="sd-tip">{{this.value}}</label>
+    <label v-if="this.value < 50" style="float:right" class="sd-tip">{{this.value}}</label>
   </div>
 </template>
 <script type="text/javascript">
+
 export default {
   name: 'dmSlider',
   props: {
-    'valueFun': {
-      type: Function,
-      required: true
-    },
-    'max': {
-      type: Number,
-      default: 100
-    },
-    'min': {
+    // 当前
+    value: {
       type: Number,
       default: 0
+    },
+    // 默认
+    min: {
+      type: Number,
+      default: 0
+    },
+    // 默认
+    max: {
+      type: Number,
+      default: 100
     }
   },
   data () {
+    console.log('dmSlider data ' + this.value)
     return {
       myPosition: {
         left: 0,
@@ -32,161 +39,116 @@ export default {
         isBtn: 0,
         propoWidth: 0
       },
-      myDefault: null
+      myDefault: null,
+      ismove: false
     }
   },
   methods: {
+    elementLeft (e) { // 计算x坐标
+      var offset = e.offsetLeft
+      if (e.offsetParent != null) offset += this.elementLeft(e.offsetParent)
+      return offset
+    },
+    elementWidth () { // 计算x坐标
+      let e = this.$refs.mySlider
+      return e.offsetWidth
+    },
+    valueLeft () {
+      console.log('dmSlider valueLeft ' + this.value)
+      return this.value + '%'
+    }
+  },
+  updated () {
+    console.log('dmSlider updated ')
   },
   mounted () {
     // 滑块
-    // let that = this
     let mySlider = this.$refs.mySlider
-    let propo = mySlider.children[1]
-    let rightBtn = mySlider.children[3]
-    let leftBtn = mySlider.children[0]
-    let myWidth = 0
+    let el = this.$refs.sd
 
-    const elementLeft = (e) => { // 计算x坐标
-      var offset = e.offsetLeft
-      if (e.offsetParent != null) offset += elementLeft(e.offsetParent)
-      return offset
-    }
+    let beginx = this.elementLeft(mySlider)
+    let beginw = mySlider.offsetWidth
 
-    const myCount = () => { // 计算滑动
-      if (this.myPosition.right > this.myPosition.left) { // 判断滑动范围
-        this.myPosition.propoWidth = this.myPosition.right - this.myPosition.left
-        propo.style.width = this.myPosition.propoWidth + '%'
-        propo.style.left = this.myPosition.left + '%'
-        this.valueFun(parseInt(this.myPosition.left), parseInt(this.myPosition.right), parseInt(this.myPosition.propoWidth))
-      } else if (this.myPosition.right < this.myPosition.left) {
-        this.myPosition.propoWidth = this.myPosition.left - this.myPosition.right
-        propo.style.width = this.myPosition.propoWidth + '%'
-        propo.style.left = this.myPosition.right + '%'
-        this.valueFun(parseInt(this.myPosition.right), parseInt(this.myPosition.left), parseInt(this.myPosition.propoWidth))
+    console.log('dmSlider mounted ' + this.value)
+    // el.style.left = this.value + '%'
+
+    let that = this
+    el.onmousedown = function (e) {
+      // var disX = e.pageX - el.offsetLeft
+      let mySliderX = beginx // 滑动块x坐标
+      document.onmousemove = function (e) {
+        let pageX = (e.pageX || e.clientX + document.documentElement.scrollLeft) - mySliderX // 获取滑动x坐标
+        let cur = parseInt((pageX / beginw) * 100) // 计算百分比
+        // let to = e.pageX - disX
+        // to = (pageX / mySlider.offsetWidth) * 100 // 计算百分比
+        console.log('drag ' + cur)
+        if (cur >= 0 && cur <= 100) {
+          // el.style.left = cur + '%'
+          that.dleft = cur
+          // that.valueFun(parseInt(cur))
+          that.$emit('input', parseInt(cur))
+          // this.$emit('onChangeValue', cur)
+        }
       }
-    }
-
-    this.myDefault = () => { // 初始化
-      this.myPosition.right = this.max
-      this.myPosition.left = this.min
-
-      if (this.max > this.min) {
-        this.myPosition.propoWidth = this.max - this.min
-        propo.style.left = this.myPosition.left + '%'
-      } else {
-        this.myPosition.propoWidth = this.min - this.max
-        propo.style.left = this.myPosition.right + '%'
+      document.onmouseup = function () {
+        document.onmousemove = document.onmouseuo = null
       }
-
-      propo.style.width = this.myPosition.propoWidth + '%'
-      leftBtn.style.left = this.myPosition.right + '%'
-      rightBtn.style.left = this.myPosition.left + '%'
-      this.valueFun(this.myPosition.left, this.myPosition.right, this.myPosition.propoWidth)
-    }
-
-    let mySliderX = elementLeft(mySlider) // 滑动块x坐标
-
-    mySlider.addEventListener('mousemove', (e) => { // 屏幕滑动事件
-      let pageX = e.touches[0].pageX - mySliderX // 获取滑动x坐标
-      myWidth = (pageX / mySlider.offsetWidth) * 100 // 计算百分比
-      if (myWidth > 100) { // 判断不超出范围
-        myWidth = 100
-      } else if (myWidth < 0) {
-        myWidth = 0
-      }
-
-      if (this.myPosition.isBtn === 1) { // 判断焦点
-        this.myPosition.left = myWidth
-        rightBtn.style.left = myWidth + '%'
-      } else if (this.myPosition.isBtn === 2) {
-        this.myPosition.right = myWidth
-        leftBtn.style.left = myWidth + '%'
-      }
-
-      myCount()
       e.preventDefault()
-    })
-
-    mySlider.addEventListener('click', (e) => { // 屏幕触摸事件
-      let touchX = e.touches[0].pageX - mySliderX
-      let btnWidth = (leftBtn.offsetWidth / mySlider.offsetWidth) / 2 * 100 // 计算按钮宽度
-      this.myPosition.now = (touchX / mySlider.offsetWidth) * 100
-      mySliderX = elementLeft(mySlider) // 滑动块x坐标
-      if (this.myPosition.now <= this.myPosition.left + btnWidth && this.myPosition.now >= this.myPosition.left - btnWidth) { // 计算区间 获取焦点
-        this.myPosition.isBtn = 1
-      } else if (this.myPosition.now <= this.myPosition.right + btnWidth && this.myPosition.now >= this.myPosition.right - btnWidth) {
-        this.myPosition.isBtn = 2
-      } else {
-        this.myPosition.isBtn = 0
-      }
-    })
-
-    this.myDefault()
+    }
   },
   watch: {
     min (New, old) {
-      this.myDefault()
+      // this.myDefault()
     },
     max (New, old) {
-      this.myDefault()
+      // this.myDefault()
     }
   }
 }
 </script>
 <style lang="scss">
     .slider{
-            width: 100%;
             position:relative;
-            height: 0.5rem;
+            height: 24px;
             .left-btn,.right-btn{
                 position: absolute;
-                top: -0.34rem;
                 transform:translate(-50%,0);
-                &:before{
-                    content: ""; 
+                content: "";
                     display: block;
-                    width: 0; 
-                    height: 0.4rem;
-                    border-left: 0.17rem solid transparent; 
-                    border-right: 0.17rem solid transparent; 
-                    border-bottom: 0.17rem solid #333333; 
-                }
-                &:after{
-                    content: "";
-                    display: block;
-                    height: 0.30rem;
-                    width: 0.34rem;
-                    background: #333333;
-                    border-bottom-left-radius: 0.1rem;
-                    border-bottom-right-radius: 0.1rem;
-                }
+                    height: 24px;
+                    width: 14px;
+                    background: #999999;
+                   border: 1px solid transparent;
+                   z-index: 2;
             }
             .propo{
                 width: 0%;
                 height: 0.04rem;
-                background: #000000;
+                background: #999999;
                 position: absolute;
                 top: 0;
                 left: 0;
                 z-index: 2;
+                display: none;
             }
             .propo-bg{
-                background: #333333;
-                border-radius: 0.04rem;
-                height: 0.04rem;
+                background: #cccccc;
+                border-radius: 2px;
+                height: 2px;
                 width:100%;
                 position: absolute;
                 top: 0;
                 left: 0;
                 z-index: 1;
+                margin-top: 11px;
             }
             .active{
-                &:before{
-                    border-bottom-color: #000000
-                }
-                &:after{
-                    background: #000000;
-                }
+                background: #999999;
             }
+    }
+    .sd-tip{
+      font-size: 11px;
+      color:#999999;
+      text-align: center;
     }
 </style>

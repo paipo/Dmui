@@ -198,6 +198,7 @@ export default {
     }
   },
   mounted () {
+    console.log('dmColor mounted ')
     // 点击页面上其他地方，关闭弹窗
     document.onclick = (e) => {
       this.openStatus = false

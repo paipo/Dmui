@@ -7,6 +7,7 @@
     </select>
     <input v-if="dom === 'input'" type="text" v-model="tvalue" class="dmti_value"/>
     <dmColorPicker v-if="dom === 'color'" v-model="tvalue" class="dmcolor"></dmColorPicker>
+    <dmSlider v-if="dom === 'slider'" v-model="tvalue" :min="0" :max="100" class="dmsilder"></dmSlider>
     <dmBtns ds="del" v-if="show_del === true" @click.native="clearvalue" class="btndel"></dmBtns>
   </div>
 </template>
@@ -72,6 +73,17 @@ export default {
     }
   },
   methods: {
+    mvalue (val) {
+      if (this.index >= 0) {
+        let value = {
+          value: val,
+          index: this.index
+        }
+        this.$emit('onChangeValue', value)
+      } else {
+        this.$emit('onChangeValue', val)
+      }
+    },
     clearvalue () {
       let func = typeof this.cusclear
       if (func === undefined) {
@@ -123,6 +135,12 @@ export default {
 }
 .dmcolor{
   margin-left: 20px;
+}
+.dmsilder{
+  margin-left: 20px;
+  width: 58%;
+  float: left;
+  margin-top: 6px;
 }
 .dmti_title{
   float: left;
