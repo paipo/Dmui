@@ -8,6 +8,7 @@
     <input v-if="dom === 'input'" type="text" v-model="tvalue" class="dmti_value"/>
     <dmColorPicker v-if="dom === 'color'" v-model="tvalue" class="dmcolor"></dmColorPicker>
     <dmSlider v-if="dom === 'slider'" v-model="tvalue" :min="0" :max="100" class="dmsilder"></dmSlider>
+    <input v-if="dom === 'checkbox'" type="checkbox" v-model="tvalue" class="dmti_check"/>
     <dmBtns ds="del" v-if="show_del === true" @click.native="clearvalue" class="btndel"></dmBtns>
   </div>
 </template>
@@ -174,6 +175,13 @@ export default {
 .dmti_select{
   float: left;
   width: 66%;
+  height: 35px;
+  border: solid 1px #dddddd;
+  margin-left: 4%;
+  text-indent: 5px;
+}
+.dmti_check{
+  float: left;
   height: 35px;
   border: solid 1px #dddddd;
   margin-left: 4%;
