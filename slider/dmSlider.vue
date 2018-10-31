@@ -117,14 +117,14 @@ export default {
                     display: block;
                     height: 24px;
                     width: 14px;
-                    background: #999999;
+                    background: #49443E;
                    border: 1px solid transparent;
                    z-index: 2;
             }
             .propo{
                 width: 0%;
                 height: 0.04rem;
-                background: #999999;
+                background: #49443E;
                 position: absolute;
                 top: 0;
                 left: 0;
@@ -132,7 +132,7 @@ export default {
                 display: none;
             }
             .propo-bg{
-                background: #cccccc;
+                background: #49443E;
                 border-radius: 2px;
                 height: 2px;
                 width:100%;

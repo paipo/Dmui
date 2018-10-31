@@ -1,10 +1,12 @@
 <template>
-    <span class="dbtn" :class="s" :style="{height:sheight+'px',width:swidth+'px'}"></span>
+    <div class="dbb" :style="{height:sheight+'px',width:swidth+'px'}">
+      <span class="dbtn" :class="s" :style="{height:(sheight-14)+'px',width:(swidth-14)+'px'}"></span>
+    </div>
 </template>
 
 <script>
 export default {
-  name: 'dmBtns',
+  name: 'dmTips',
   data () {
     return {
       s: this.ds,
@@ -74,7 +76,14 @@ export default {
 }
 .dbtn{
   background-size: 100%;
-  display: block;
-  cursor: pointer;
+  display: inline-block;
+}
+.dbb{
+  display: flex;
+    justify-content:center;
+    align-items:Center;    
+}
+.dbb:hover{
+  background-color: #eeeeee;
 }
 </style>

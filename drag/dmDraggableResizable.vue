@@ -34,7 +34,16 @@ export default {
   replace: true,
   name: 'dmDraggableResizable',
   props: {
+    tag: {
+      default: null
+    },
+    uid: {
+      default: ''
+    },
     active: {
+      type: Boolean, default: false
+    },
+    select: {
       type: Boolean, default: false
     },
     draggable: {
@@ -231,8 +240,8 @@ export default {
       this.elmW = this.width
       this.elmH = this.height
 
-      this.$emit('activated')
-      this.$emit('resizing', this.left, this.top, this.width, this.height)
+      this.$emit('activated', this.tag)
+      this.$emit('resizing', this.left, this.top, this.width, this.height, this.tag)
     },
     elmDown: function (e) {
       const target = e.target || e.srcElement
@@ -249,16 +258,20 @@ export default {
         if (!this.enabled) {
           this.enabled = true
 
-          this.$emit('activated')
+          this.$emit('activated', this.tag)
           this.$emit('update:active', true)
         }
 
         if (this.draggable) {
           this.dragging = true
         }
+
+        if (e.stopPropagation) e.stopPropagation()
+        if (e.preventDefault) e.preventDefault()
       }
     },
     deselect: function (e) {
+      // if (this.select) return
       if (e.type.indexOf('touch') !== -1) {
         this.mouseX = e.changedTouches[0].clientX
         this.mouseY = e.changedTouches[0].clientY
@@ -274,10 +287,10 @@ export default {
       const regex = new RegExp('handle-([trmbl]{2})', '')
 
       if (!this.$el.contains(target) && !regex.test(target.className)) {
-        if (this.enabled) {
+        if (this.enabled && !this.select) {
           this.enabled = false
 
-          this.$emit('deactivated')
+          this.$emit('deactivated', this.tag)
           this.$emit('update:active', false)
         }
       }
@@ -341,10 +354,14 @@ export default {
           }
         }
 
-        this.$emit('resizing', this.left, this.top, this.width, this.height)
+        this.$emit('resizing', this.left, this.top, this.width, this.height, this.tag)
       }
 
       window.requestAnimationFrame(animate)
+    },
+    goMove: function (left, top) {
+      this.left += left
+      this.top += top
     },
     handleMove: function (e) {
       const isTouchMove = e.type.indexOf('touchmove') !== -1
@@ -399,7 +416,7 @@ export default {
         this.width = (Math.round(this.elmW / this.grid[0]) * this.grid[0])
         this.height = (Math.round(this.elmH / this.grid[1]) * this.grid[1])
 
-        this.$emit('resizing', this.left, this.top, this.width, this.height)
+        this.$emit('resizing', this.left, this.top, this.width, this.height, this.tag)
       } else if (this.dragging) {
         if (this.parent) {
           if (this.elmX + dX < this.parentX) this.mouseOffX = (dX - (diffX = this.parentX - this.elmX))
@@ -412,14 +429,22 @@ export default {
         this.elmX += diffX
         this.elmY += diffY
 
+        let _left = (Math.round(this.elmX / this.grid[0]) * this.grid[0])
         if (this.axis === 'x' || this.axis === 'both') {
-          this.left = (Math.round(this.elmX / this.grid[0]) * this.grid[0])
+          this.left = _left
         }
+        let _top = (Math.round(this.elmY / this.grid[1]) * this.grid[1])
         if (this.axis === 'y' || this.axis === 'both') {
-          this.top = (Math.round(this.elmY / this.grid[1]) * this.grid[1])
+          this.top = _top
         }
 
-        this.$emit('dragging', this.left, this.top)
+        // const target = e.target || e.srcElement
+        // const regex = new RegExp('handle-([trmbl]{2})', '')
+        // if (!this.$el.contains(target) && !regex.test(target.className)) {
+        //   this.left = _left
+        //   this.top = _top
+        // }
+        this.$emit('dragging', this.left, this.top, diffX, diffY, this.tag)
       }
     },
     handleUp: function (e) {
@@ -456,6 +481,9 @@ export default {
 
   watch: {
     active: function (val) {
+      this.enabled = val
+    },
+    select: function (val) {
       this.enabled = val
     },
     z: function (val) {

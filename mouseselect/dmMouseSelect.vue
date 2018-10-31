@@ -23,7 +23,9 @@ export default {
   props: [
     'border',
     'borderWidth',
-    'borderColor'
+    'borderColor',
+    'body',
+    'itop'
   ],
   computed: {
   },
@@ -44,14 +46,24 @@ export default {
       return this.left + 'px'
     },
     stop () {
-      return this.top + 'px'
+      if (this.itop !== undefined) {
+        return (this.top - this.itop) + 'px'
+      } else {
+        return (this.top) + 'px'
+      }
     },
     start () {
       console.log('dmmouseselect start')
       // document.addEventListener('touchend touchcancel', this.handleBegin, true)
-      document.addEventListener('mousedown', this.handleDown, true)
-      document.addEventListener('mousemove', this.handleMove, true)
-      document.addEventListener('mouseup', this.handleUp, true)
+      if (this.body === '') {
+        document.addEventListener('mousedown', this.handleDown, true)
+        document.addEventListener('mousemove', this.handleMove, true)
+        document.addEventListener('mouseup', this.handleUp, true)
+      } else {
+        document.getElementById(this.body).addEventListener('mousedown', this.handleDown, true)
+        document.getElementById(this.body).addEventListener('mousemove', this.handleMove, true)
+        document.getElementById(this.body).addEventListener('mouseup', this.handleUp, true)
+      }
     },
     handleDown (e) {
       console.log('dmmouseselect handleDown')
@@ -61,6 +73,7 @@ export default {
       dmMouseSelectDown = setTimeout(function () {
         that.handleBegin(e)
       }, 200)
+      this.$emit('selectDown', e, this.startX, this.startY)
       // if (e.stopPropagation) e.stopPropagation()
       // if (e.preventDefault) e.preventDefault()
     },
@@ -90,8 +103,8 @@ export default {
       if (!this.handle) return
       console.log('dmmouseselect handleMove')
       console.log(e.pageX || e.clientX + document.documentElement.scrollLeft)
-      this.lastMouseX = e.pageX || e.clientX + document.documentElement.scrollLeft
-      this.lastMouseY = e.pageY || e.clientY + document.documentElement.scrollTop
+      this.lastMouseX = e.pageX - 8 || e.clientX + document.documentElement.scrollLeft - 8
+      this.lastMouseY = e.pageY - 8 || e.clientY + document.documentElement.scrollTop - 8
       if (this.lastMouseX < this.startX) {
         this.width = this.startX - this.lastMouseX
         this.left = this.lastMouseX
@@ -114,15 +127,17 @@ export default {
     handleUp () {
       clearTimeout(dmMouseSelectDown)
       console.log('dmmouseselect handleUp')
-      this.handle = false
       this.display = 'none'
       let rec = {
         x1: this.left,
-        y1: this.top,
+        y1: this.top - this.itop,
         x2: this.left + this.width,
-        y2: this.top + this.height
+        y2: this.top + this.height - this.itop
       }
-      this.$emit('selectover', rec)
+      if (this.handle) {
+        this.$emit('selectover', rec)
+      }
+      this.handle = false
     },
     handleNone () {
       this.handleUp()
@@ -135,5 +150,6 @@ export default {
 .mouseselect {
   border:solid 1px #000000;
   position: absolute;
+  z-index: 999999;
 }
 </style>
