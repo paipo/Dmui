@@ -113,6 +113,19 @@ export default {
       html5Color: this.value
     }
   },
+  beforeMount () {
+    let that = this
+    this._close = e => {
+      if (this.$el.contains(e.target)) {
+        return
+      }
+      that.openStatus = false
+    }
+    document.body.addEventListener('click', this._close)
+  },
+  beforeDestroy () {
+    document.body.removeEventListener('click', this._close)
+  },
   computed: {
     // 显示面板颜色
     showPanelColor () {

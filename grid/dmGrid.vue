@@ -7,7 +7,7 @@
         </span>
         <span class="one o2">{{item.uid+1}}</span>
         <span class="one o1">{{item.tn}}</span>
-        <span class="one o3"><img src="../../../assets/images/more.png"/></span>
+        <span class="one o3"><img src="../../../static/images/more.png"/></span>
       </div>
       <div v-else class="selectno">
         <span class="one ig">
@@ -15,7 +15,7 @@
         </span>
         <span class="one o2">{{item.uid+1}}</span>
         <span class="one o1">{{item.tn}}</span>
-        <span class="one o3"><img src="../../../assets/images/more.png"/></span>
+        <span class="one o3"><img src="../../../static/images/more.png"/></span>
       </div>
     </li>
   </ul>
@@ -35,18 +35,18 @@ export default {
   methods: {
     img (t) {
       switch (t) {
-        case 'chart_bar' : return '../../../assets/images/c_c_bar.png'
-        case 'chart_pie' : return '../../../assets/images/c_c_pie.png'
-        case 'chart_line' : return '../../../assets/images/c_c_line.png'
-        case 'chart_radar' : return '../../../assets/images/c_c_radar.png'
-        case 'chart_sunburst' : return '../../../assets/images/c_line.png'
-        case 'text' : return '../../../assets/images/c_font.png'
-        case 'image' : return '../../../assets/images/c_image.png'
-        case 'movie' : return '../../../assets/images/c_movie.png'
-        case 'stable' : return '../../../assets/images/c_table.png'
-        case 'sum' : return '../../../assets/images/c_sum.png'
-        case 'clock' : return '../../../assets/images/c_clock2.png'
-        case 'date' : return '../../../assets/images/c_date.png'
+        case 'chart_bar' : return __static + '\\images\\c_c_bar.png'
+        case 'chart_pie' : return __static + '\\images\\c_c_pie.png'
+        case 'chart_line' : return __static + '\\images\\c_c_line.png'
+        case 'chart_radar' : return __static + '\\images\\c_c_radar.png'
+        case 'chart_sunburst' : return __static + '\\images\\c_line.png'
+        case 'text' : return __static + '\\images\\c_font.png'
+        case 'image' : return __static + '\\images\\c_image.png'
+        case 'movie' : return __static + '\\images\\c_movie.png'
+        case 'stable' : return __static + '\\images\\c_table.png'
+        case 'sum' : return __static + '\\images\\c_sum.png'
+        case 'clock' : return __static + '\\images\\c_clock2.png'
+        case 'date' : return __static + '\\images\\c_date.png'
       }
     },
     bind (datas) {

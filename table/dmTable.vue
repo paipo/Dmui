@@ -4,10 +4,12 @@
     <table cellspacing="0" cellpadding="0">
       <thead>
       <tr>
-        <th class="heard" v-for="(o, index2) in cols" v-bind:key="index2">
+        <th class="heard" v-for="(o, index2) in cols" v-bind:key="index2" @mouseover="overthistr(index2)" @mouseout="outthistr(index2)">
           <input type="text" v-model="cols[index2]" class="dmti_heard"/>
+           <dmBtns ds="del" v-if="showstr[index2] === true" @click.native="clearvaluetr(index2)" class="btndel2"></dmBtns>
         </th>
         <th class="heard">
+          <dmBtns ds="add" @click.native="addheard()" class="btndel"></dmBtns>
         </th>
       </tr>
       </thead>
@@ -35,6 +37,7 @@ export default {
         lineTitle: this.dtitle,
         show_del: false,
         shows: [],
+        showstr: [],
         datas: [],
         cols: []
       }
@@ -44,6 +47,7 @@ export default {
         lineTitle: this.dtitle,
         show_del: false,
         shows: [],
+        showstr: [],
         datas: this.ddatas,
         cols: this.dcols
       }
@@ -58,12 +62,25 @@ export default {
     })
   },
   methods: {
+    addheard () {
+      this.cols.push('')
+      this.datas.forEach(function (c) {
+        c.tr.push('')
+      })
+      this.$emit('addheard')
+    },
     borderColor (val) {
       return '#' + this.lineColor
     },
     clearvalue (index) {
       this.datas.splice(index, 1)
       this.shows.splice(index, 1)
+    },
+    clearvaluetr (index) {
+      this.datas.forEach(function (c) {
+        c.tr.splice(index, 1)
+      })
+      this.cols.splice(index, 1)
     },
     onChange (v) {
       console.log(this.datas)
@@ -84,6 +101,15 @@ export default {
     },
     outthis (index) {
       this.shows.splice(index, 1, false)
+      // this.show_del = false
+    },
+    overthistr (index) {
+      this.showstr.splice(index, 1, true)
+      console.log('table show true')
+      // this.show_del = true
+    },
+    outthistr (index) {
+      this.showstr.splice(index, 1, false)
       // this.show_del = false
     }
   }
@@ -112,16 +138,18 @@ export default {
     height: 30px;
     border: none;
     border-bottom: solid 1px #eeeeee;
-    width: 70px;
+    width: 80px;
     text-align: center;
-    margin-left: 10px;
+    margin-right: 10px;
+    padding: 0px 5px;
   }
   .dmti_heard{
     height: 30px;
     border: none;
     border-bottom: solid 1px #eeeeee;
-    width: 60px;
+    width: 80px;
     text-align: center;
+    padding: 0px 5px;
   }
   .btndel{
     position: relative;
@@ -129,8 +157,13 @@ export default {
     margin-top: 0px;
     margin-left: 15px;
   }
+  .btndel2{
+    position: absolute;
+    margin-top: -32px;
+    margin-left: 80px;
+  }
   .heard{
-    background-color: #eeeeee;
+    /* background-color: #eeeeee; */
     height: 45px;
     line-height: 45px;
   }

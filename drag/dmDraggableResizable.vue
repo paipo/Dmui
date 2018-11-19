@@ -23,6 +23,14 @@
       @mousedown.stop.prevent="handleDown(handle, $event)"
       @touchstart.stop.prevent="handleDown(handle, $event)"
     ></div>
+    <div
+      v-else
+      v-for="handle in handlesnone"
+      class="handlenone"
+      :key="handle.uid"
+      :class="'handlenone-' + handle"
+      :style="{ display: enabled ? 'block' : 'none'}"
+    ></div>
     <slot></slot>
   </div>
 </template>
@@ -109,6 +117,17 @@ export default {
       },
       validator: function (val) {
         var s = new Set(['tl', 'tm', 'tr', 'mr', 'br', 'bm', 'bl', 'ml'])
+
+        return new Set(val.filter(h => s.has(h))).size === val.length
+      }
+    },
+    handlesnone: {
+      type: Array,
+      default: function () {
+        return ['tl', 'tr', 'br', 'bl']
+      },
+      validator: function (val) {
+        var s = new Set(['tl', 'tr', 'br', 'bl'])
 
         return new Set(val.filter(h => s.has(h))).size === val.length
       }
@@ -509,6 +528,33 @@ export default {
     font-size: 1px;
     background: #333;
     border: 1px solid #fff;
+  }
+  .handlenone {
+    box-sizing: border-box;
+    display: none;
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    font-size: 1px;
+    background: #333;
+    border: 1px solid #fff;
+    border-radius: 8px;
+  }
+  .handlenone-tl {
+    top: -6px;
+    left: -6px;
+  }
+  .handlenone-tr {
+    top: -6px;
+    right: -6px;
+  }
+  .handlenone-bl {
+    bottom: -6px;
+    left: -6px;
+  }
+  .handlenone-br {
+    bottom: -6px;
+    right: -6px;
   }
   .handle-tl {
     top: -10px;

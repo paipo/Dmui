@@ -5,7 +5,9 @@
         <slot name="header"> 
           <h2>this is title</h2>
         </slot> 
-        <button type="button" class="btn-close" @click="close">x</button> 
+        <button type="button" class="btn-close" @click="close">
+          <img src="../assets/images/close.png" height="30px" width="30px" />
+          </button> 
       </div> 
       <div class="modal-body"> 
         <slot name="body">this is body</slot> 
@@ -85,7 +87,7 @@ export default {
   color: #4aae9b; 
   background-color: transparent; 
   position: relative;
-  margin-top: -20px;
+  outline:none;
 } 
 .btn-green { 
   color: #fff; 

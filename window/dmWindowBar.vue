@@ -17,10 +17,13 @@
       <span class="btns" @click="min">
         <img style="height:15px;width:15px;" src="../assets/images/最小化.png" />
       </span>
-      <span class="btns" @click="max">
+      <span v-if="wstate === 0" class="btns" @click="max">
         <img style="height:16px;width:16px;" src="../assets/images/最大化.png" />
       </span>
-      <span class="btns" @click="close">
+      <span v-if="wstate === 1" class="btns" @click="maxback">
+        <img style="height:12px;width:12px;" src="../assets/images/还原.png" />
+      </span>
+      <span class="btnst" @click="close">
         <img style="height:12px;width:12px;" src="../assets/images/关闭.png" />
       </span>
     </div>
@@ -32,40 +35,65 @@
     name: 'dmWindowBar',
     data () {
       return {
+        wstate: 1,
         items: [
           {
             text: '文件',
             icon: '',
-            items: [
-              {
-                text: '新建',
-                click: 'new'
-              },
-              {
-                text: '打开',
-                line: 'true',
-                click: 'open'
-              },
-              {
-                text: '退出',
-                click: 'out'
-              }
-            ]
+            menus: {
+              show: false,
+              items: [
+                {
+                  text: '新建',
+                  click: 'new'
+                },
+                {
+                  text: '打开',
+                  line: 'true',
+                  click: 'open'
+                },
+                {
+                  text: '最近',
+                  line: 'true',
+                  menus: {
+                    show: false,
+                    items: [
+                      {
+                        text: '11',
+                        click: 'cur-11'
+                      },
+                      {
+                        text: '22',
+                        line: 'true',
+                        click: 'cur-22'
+                      }
+                    ]
+                  }
+                },
+                {
+                  text: '退出',
+                  click: 'out'
+                }
+              ]
+            }
           },
           {
             text: '接口',
             icon: '../plugin/dmui/assets/images/接口.png',
             iconheight: 26,
-            items: [
-              {
-                text: '测试',
-                click: 'apitest'
-              },
-              {
-                text: '设置',
-                click: 'apiset'
-              }
-            ]
+            menus: {
+              show: false,
+              items: [
+                {
+                  text: '测试',
+                  click: 'apitest'
+                },
+                {
+                  text: '设置',
+                  click: 'apiset'
+                }
+              ]
+            }
           },
           {
             text: '预览',
@@ -90,6 +118,11 @@
       },
       max: function () {
         ipc.send('max')
+        this.wstate = 1
+      },
+      maxback: function () {
+        ipc.send('maxback')
+        this.wstate = 0
       }
     }
   }
@@ -140,6 +173,18 @@
   float: left;
   background-color: #444444;
 }
+.btnst{
+  width: 50px;
+  float: left;
+  height: 40px;
+  display: flex;
+  justify-content:center;
+  align-items:Center;
+}
+.btnst:hover{
+  float: left;
+  background-color:darkred;
+}
 #dmWindowBar {
   z-index: 9999999;
   position: fixed;
@@ -159,5 +204,6 @@
   justify-content:center;
   display:flex;
   flex: 1 1 auto;
+  
 }
 </style>

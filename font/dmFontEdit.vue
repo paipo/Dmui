@@ -4,7 +4,7 @@
       <span class="tcolor" :style="{backgroundColor:value.color}"></span>
       <span style="float:left;">{{getText()}}</span>
     </div>
-    <div class="set" v-if="this.showed === 'true'" @mousemove="displayShow()" @mouseout="displayHide()">
+    <div class="set" v-if="this.showed === 'true'">
       <div class="l1">
         <span v-if="value.b === 'true'" class="btn s" @click="ckb()">B</span>
         <span v-else class="btn n" @click="ckb()">B</span>
@@ -97,6 +97,19 @@ export default {
     'dcolor',
     'dfonts'
   ],
+  beforeMount () {
+    let that = this
+    this._close = e => {
+      if (this.$el.contains(e.target)) {
+        return
+      }
+      that.showed = 'false'
+    }
+    document.body.addEventListener('click', this._close)
+  },
+  beforeDestroy () {
+    document.body.removeEventListener('click', this._close)
+  },
   watch: {
     value (val) {
       this.$emit('onChange', this.value)
@@ -115,13 +128,17 @@ export default {
     getText () {
       let v = ''
       if (this.value.b === 'true') {
-        v += '粗体 '
+        v += '粗 '
       }
       if (this.value.i === 'true') {
-        v += '斜体 '
+        v += '斜 '
       }
       v += this.value.size + ' '
-      v += this.value.font + ' '
+      if (this.value.font.length > 15) {
+        v += this.value.font.substring(0, 15) + '..'
+      } else {
+        v += this.value.font + ''
+      }
       return v
     },
     ckb () {
