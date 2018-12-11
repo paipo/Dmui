@@ -3,7 +3,7 @@
     <input v-if="editTitle === true && dom !== 'inputline'" type="text" v-model="ttitle" class="dmti_title"/>
     <label v-else-if="editTitle === false && dom !== 'inputline'" type="text" class="dmti_label">{{ttitle}}</label>
     <select v-if="dom === 'select'" class="dmti_select" v-model="tvalue">
-      <option v-for="(item, index) in selectdatas" v-bind:key="index" name="nbfontsize" :value="item" :style="{fontSize:item+'px'}">{{item}}</option>
+      <option v-for="(item, index) in selectdatas" v-bind:key="index" name="nbfontsize" :value="selectValue(item)" :style="{fontSize:item+'px'}">{{selectText(item)}}</option>
     </select>
     <dmFontEdit v-if="dom === 'font'" :dfont="font" :dfonts="remote.getGlobal('fonts')" :di="fonti" :db="fontb" :dcolor="fontcolor" :dsize="fontsize"  @onChange="onChangeFont"/>
     <input v-if="dom === 'inputline'" type="text" v-model="tvalue" class="dmti_value"/>
@@ -164,6 +164,20 @@ export default {
     }
   },
   methods: {
+    selectValue (val) {
+      if (val.value === undefined) {
+        return val
+      } else {
+        return val.value
+      }
+    },
+    selectText (val) {
+      if (val.text === undefined) {
+        return val
+      } else {
+        return val.text
+      }
+    },
     onChangeFont (val) {
       // this.font = val.font
       // this.fontb = val.b

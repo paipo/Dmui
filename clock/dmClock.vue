@@ -20,7 +20,7 @@ export default {
   mounted () {
     this.dateBegin()
   },
-  props: ['dauto', 'dvalue', 'dstop', 'clockRadius'],
+  props: ['dauto', 'dvalue', 'dstop', 'clockRadius', 'colorscale', 'colorhour', 'colorminute', 'colorsecond'],
   methods: {
     w () {
       return this.clockRadius + 'px'
@@ -32,7 +32,7 @@ export default {
     drawScene () {
       this.clear() // clear canvas
 
-      console.log('drawScene ' + this.clockRadius)
+      // console.log('drawScene ' + this.clockRadius)
 
       // get current time
       var date = new Date()
@@ -54,7 +54,7 @@ export default {
 
       // draw numbers
       this.ctx.font = '14px Arial'
-      this.ctx.fillStyle = '#000'
+      this.ctx.fillStyle = this.colorscale
       this.ctx.textAlign = 'center'
       this.ctx.textBaseline = 'middle'
       for (var n = 1; n <= 12; n++) {
@@ -64,6 +64,7 @@ export default {
         this.ctx.fillText(n, x, y)
       }
 
+      this.ctx.fillStyle = this.colorhour
       // draw hour
       this.ctx.save()
       theta = (hour - 3) * 2 * Math.PI / 12
@@ -76,6 +77,7 @@ export default {
       this.ctx.fill()
       this.ctx.restore()
 
+      this.ctx.fillStyle = this.colorminute
       // draw minute
       this.ctx.save()
       theta = (minute - 15) * 2 * Math.PI / 60
@@ -88,6 +90,7 @@ export default {
       this.ctx.fill()
       this.ctx.restore()
 
+      this.ctx.fillStyle = this.colorsecond
       // draw second
       this.ctx.save()
       theta = (seconds - 15) * 2 * Math.PI / 60
@@ -97,7 +100,6 @@ export default {
       this.ctx.lineTo(-15, 1)
       this.ctx.lineTo(this.clockRadius * 0.4, 0)
       this.ctx.lineTo(this.clockRadius * 0.4, 0)
-      this.ctx.fillStyle = '#333'
       this.ctx.fill()
       this.ctx.restore()
 
